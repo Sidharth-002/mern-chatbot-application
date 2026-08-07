@@ -1,9 +1,18 @@
 const User = require("../models/userModel");
 const bcrypt = require("bcrypt");
-const { registerSchema } = require("../validators/authValidator");
+const { registerSchema, loginSchema } = require("../validators/authValidator");
 
 module.exports.login = async (req, res, next) => {
   try {
+    const { error } = loginSchema.validate(req.body);
+
+    if (error) {
+      return res.json({
+        status: false,
+        msg: error.details[0].message,
+      });
+    }
+
     const { username, password } = req.body;
     const user = await User.findOne({ username });
     if (!user)
@@ -11,8 +20,11 @@ module.exports.login = async (req, res, next) => {
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid)
       return res.json({ msg: "Incorrect Username or Password", status: false });
-    delete user.password;
-    return res.json({ status: true, user });
+    console.log(typeof user);
+    const userData = { ...user._doc };
+    delete userData.password;
+
+    return res.json({ status: true, user: userData });
   } catch (ex) {
     next(ex);
   }
@@ -42,8 +54,9 @@ module.exports.register = async (req, res, next) => {
       username,
       password: hashedPassword,
     });
-    delete user.password;
-    return res.json({ status: true, user });
+    const userData = { ...user._doc };
+    delete userData.password;
+    return res.json({ status: true, user: userData });
   } catch (ex) {
     next(ex);
   }
@@ -57,7 +70,14 @@ module.exports.getAllUsers = async (req, res, next) => {
       "avatarImage",
       "_id",
     ]);
-    return res.json(users);
+
+    const userWithoutPassword = users.map((user) => {
+      const userData = { ...user._doc };
+      delete userData.password;
+      return userData;
+    });
+
+    return res.json(userWithoutPassword);
   } catch (ex) {
     next(ex);
   }

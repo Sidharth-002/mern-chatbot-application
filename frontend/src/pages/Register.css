@@ -1,4 +1,4 @@
-.login-page {
+.register-page {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -7,39 +7,28 @@
   background-color: #131324;
   min-height: 100%;
 }
-
-.login-page .form-container {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-}
-
-.login-page .form {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  background-color: #00000076;
-  border-radius: 2rem;
-  padding: 5rem;
-}
-
-.login-page .brand {
+.register-page .brand {
   display: flex;
   align-items: center;
   gap: 1rem;
   justify-content: center;
 }
-
-.login-page .brand img {
+.register-page .brand img {
   height: 5rem;
 }
-
-.login-page .brand h1 {
+.register-page .brand h1 {
   color: white;
   text-transform: uppercase;
 }
-
-.login-page .form input {
+.register-page form {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  background-color: #00000076;
+  border-radius: 2rem;
+  padding: 3rem 5rem;
+}
+.register-page input {
   background-color: transparent;
   padding: 1rem;
   border: 0.1rem solid #4e0eff;
@@ -47,15 +36,12 @@
   color: white;
   width: 100%;
   font-size: 1rem;
-  box-sizing: border-box;
 }
-
-.login-page .form input:focus {
+.register-page input:focus {
   border: 0.1rem solid #997af0;
   outline: none;
 }
-
-.login-page .form button {
+.register-page button {
   background-color: #4e0eff;
   color: white;
   padding: 1rem 2rem;
@@ -66,17 +52,16 @@
   font-size: 1rem;
   text-transform: uppercase;
 }
-
-.login-page .form button:hover {
+.register-page button:hover {
   background-color: #4e0eff;
+  transform: scale(1.05);
 }
-
-.login-page .form .auth-text {
+.register-page span {
   color: white;
   text-transform: uppercase;
 }
 
-.login-page .form .auth-text a {
+.register-page span a {
   color: #4e0eff;
   text-decoration: none;
   font-weight: bold;

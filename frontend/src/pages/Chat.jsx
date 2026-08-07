@@ -2,6 +2,9 @@ import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
+import { ToastContainer, toast } from "react-toastify";
+import { toastOptions } from "../utils/toast";
+import "react-toastify/dist/ReactToastify.css";
 import { allUsersRoute, host } from "../utils/APIRoutes";
 import ChatContainer from "../components/ChatContainer";
 import Contacts from "../components/Contacts";
@@ -28,6 +31,7 @@ export default function Chat() {
       setCurrentUser(JSON.parse(storedUser));
     } catch (error) {
       console.error("Failed to parse stored user", error);
+      toast.error("Something went wrong. Redirected to login", toastOptions);
       localStorage.removeItem(process.env.REACT_APP_LOCALHOST_KEY);
       navigate("/login");
     }
@@ -74,6 +78,7 @@ export default function Chat() {
           )}
         </div>
       </div>
+      <ToastContainer />
     </>
   );
 }

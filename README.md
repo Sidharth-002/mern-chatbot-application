@@ -36,7 +36,7 @@ For Frontend.
 ```shell
 cd frontend
 npm install
-npm run dev
+npm start dev
 ```
 
 For Backend.
@@ -46,7 +46,7 @@ Open another terminal in folder, Also make sure mongodb is running in background
 ```shell
 cd backend
 npm install
-npm run dev
+npm start dev
 ```
 
 Done! Now open localhost:3000 in your browser.

@@ -6,6 +6,12 @@
   box-sizing: border-box;
 }
 
+html,
+body,
+#root {
+  height: 100%;
+}
+
 body,
 button,
 input {
@@ -13,9 +19,10 @@ input {
 }
 
 body {
-  max-height: 100vh;
-  max-width: 100vw;
-  overflow: hidden;
+  min-height: 100%;
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: auto;
 }
 
 .Toastify__toast-theme--dark {
