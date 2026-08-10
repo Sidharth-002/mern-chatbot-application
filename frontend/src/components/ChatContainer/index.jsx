@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import "./ChatContainer.css";
 import ChatInput from "../ChatInput";
 import Logout from "../Logout";
@@ -10,7 +10,7 @@ export default function ChatContainer({ currentChat, onToggleContacts }) {
   const [messages, setMessages] = useState([]);
   const scrollRef = useRef();
 
-  const fetchMessages = async () => {
+  const fetchMessages = useCallback(async () => {
     try {
       const storedUser = localStorage.getItem(
         process.env.REACT_APP_LOCALHOST_KEY,
@@ -25,7 +25,7 @@ export default function ChatContainer({ currentChat, onToggleContacts }) {
     } catch (error) {
       console.error("Error fetching messages:", error);
     }
-  };
+  }, [currentChat]);
 
   useEffect(() => {
     if (!currentChat) return;
@@ -39,7 +39,7 @@ export default function ChatContainer({ currentChat, onToggleContacts }) {
     return () => {
       clearInterval(intervalId);
     };
-  }, [currentChat]);
+  }, [currentChat, fetchMessages]);
 
   const handleSendMsg = async (msg) => {
     const data = JSON.parse(
