@@ -17,6 +17,7 @@ export default function Chat() {
   const [contacts, setContacts] = useState([]);
   const [currentChat, setCurrentChat] = useState(undefined);
   const [currentUser, setCurrentUser] = useState(undefined);
+  const [contactsOpen, setContactsOpen] = useState(false);
   useEffect(() => {
     const storedUser = localStorage.getItem(
       process.env.REACT_APP_LOCALHOST_KEY,
@@ -65,16 +66,49 @@ export default function Chat() {
   }, [currentUser, navigate]);
   const handleChatChange = (chat) => {
     setCurrentChat(chat);
+    setContactsOpen(false);
   };
+
+  const toggleContacts = () => {
+    setContactsOpen((prev) => !prev);
+  };
+
   return (
     <>
       <div className="chat-page">
+        {currentChat === undefined && (
+          <div className="mobile-menu-bar">
+            <button
+              type="button"
+              className="mobile-menu-btn"
+              onClick={toggleContacts}
+            >
+              ☰
+            </button>
+            {/* <span>Chats</span> */}
+          </div>
+        )}
         <div className="chat-container">
-          <Contacts contacts={contacts} changeChat={handleChatChange} />
+          <Contacts
+            contacts={contacts}
+            changeChat={handleChatChange}
+            isMobileOpen={contactsOpen}
+            closeMobileMenu={() => setContactsOpen(false)}
+          />
+          {contactsOpen && (
+            <div
+              className="contacts-backdrop"
+              onClick={() => setContactsOpen(false)}
+            />
+          )}
           {currentChat === undefined ? (
             <Welcome />
           ) : (
-            <ChatContainer currentChat={currentChat} socket={socket} />
+            <ChatContainer
+              currentChat={currentChat}
+              socket={socket}
+              onToggleContacts={toggleContacts}
+            />
           )}
         </div>
       </div>

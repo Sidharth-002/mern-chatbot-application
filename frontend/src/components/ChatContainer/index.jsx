@@ -6,7 +6,11 @@ import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
 import { sendMessageRoute, recieveMessageRoute } from "../../utils/APIRoutes";
 
-export default function ChatContainer({ currentChat, socket }) {
+export default function ChatContainer({
+  currentChat,
+  socket,
+  onToggleContacts,
+}) {
   const [messages, setMessages] = useState([]);
   const scrollRef = useRef();
   const [arrivalMessage, setArrivalMessage] = useState(null);
@@ -128,6 +132,13 @@ export default function ChatContainer({ currentChat, socket }) {
   return (
     <div className="chat-container-inner">
       <div className="chat-header">
+        <button
+          type="button"
+          className="menu-button"
+          onClick={onToggleContacts}
+        >
+          ☰
+        </button>
         <div className="user-details">
           <div className="avatar">
             <img

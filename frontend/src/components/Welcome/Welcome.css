@@ -4,12 +4,39 @@
   align-items: center;
   color: white;
   flex-direction: column;
+  padding: 2rem 1rem;
+  text-align: center;
+  min-height: 100%;
+  gap: 1.5rem;
+  max-width: 100%;
 }
 
 .container img {
-  height: 20rem;
+  height: 18rem;
+  max-width: 100%;
 }
 
 .container span {
   color: #a066ff;
+}
+
+@media screen and (max-width: 720px) {
+  .container {
+    padding: 1.2rem 0.75rem;
+    gap: 1rem;
+  }
+
+  .container img {
+    height: 14rem;
+  }
+
+  .container h1 {
+    font-size: 1.8rem;
+  }
+
+  .container h3 {
+    font-size: 1rem;
+    line-height: 1.5;
+    max-width: 24rem;
+  }
 }
