@@ -54,8 +54,8 @@ export default function ChatContainer({
     const data = JSON.parse(
       localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY),
     );
-    if (!data || !currentChat) return;
-    socket.current.emit("send-msg", {
+    if (!data || !currentChat || !socket) return;
+    socket.emit("send-msg", {
       to: currentChat._id,
       from: data._id,
       msg,
@@ -71,7 +71,7 @@ export default function ChatContainer({
   };
 
   useEffect(() => {
-    if (!socket || !socket.current) return;
+    if (!socket) return;
     const handleMsgReceive = (payload) => {
       // payload may be a string (older server) or an object { from, msg }
       const from = payload && typeof payload === "object" ? payload.from : null;
@@ -97,12 +97,9 @@ export default function ChatContainer({
       }
     };
 
-    const sock = socket.current;
-    sock.on("msg-recieve", handleMsgReceive);
+    socket.on("msg-recieve", handleMsgReceive);
     return () => {
-      sock.off && sock.off("msg-recieve", handleMsgReceive);
-      sock.removeListener &&
-        sock.removeListener("msg-recieve", handleMsgReceive);
+      socket.off && socket.off("msg-recieve", handleMsgReceive);
     };
   }, [socket]);
 
