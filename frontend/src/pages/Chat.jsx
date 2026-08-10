@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { io } from "socket.io-client";
 import { ToastContainer, toast } from "react-toastify";
 import { toastOptions } from "../utils/toast";
 import "react-toastify/dist/ReactToastify.css";
-import { allUsersRoute, host } from "../utils/APIRoutes";
+import { allUsersRoute } from "../utils/APIRoutes";
 import ChatContainer from "../components/ChatContainer";
 import Contacts from "../components/Contacts";
 import Welcome from "../components/Welcome";
@@ -13,7 +12,6 @@ import "./Chat.css";
 
 export default function Chat() {
   const navigate = useNavigate();
-  const [socket, setSocket] = useState(null);
   const [contacts, setContacts] = useState([]);
   const [currentChat, setCurrentChat] = useState(undefined);
   const [currentUser, setCurrentUser] = useState(undefined);
@@ -37,18 +35,6 @@ export default function Chat() {
       navigate("/login");
     }
   }, [navigate]);
-  useEffect(() => {
-    if (!currentUser) return;
-
-    const newSocket = io(host);
-    newSocket.emit("add-user", currentUser._id);
-    setSocket(newSocket);
-
-    return () => {
-      newSocket.disconnect();
-    };
-  }, [currentUser]);
-
   useEffect(() => {
     const fetchContacts = async () => {
       if (!currentUser) return;
@@ -111,7 +97,6 @@ export default function Chat() {
           ) : (
             <ChatContainer
               currentChat={currentChat}
-              socket={socket}
               onToggleContacts={toggleContacts}
             />
           )}

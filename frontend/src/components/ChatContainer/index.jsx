@@ -6,125 +6,58 @@ import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
 import { sendMessageRoute, recieveMessageRoute } from "../../utils/APIRoutes";
 
-export default function ChatContainer({
-  currentChat,
-  socket,
-  onToggleContacts,
-}) {
+export default function ChatContainer({ currentChat, onToggleContacts }) {
   const [messages, setMessages] = useState([]);
   const scrollRef = useRef();
-  const [arrivalMessage, setArrivalMessage] = useState(null);
-  const currentChatRef = useRef(null);
 
-  useEffect(() => {
-    const fetchMessages = async () => {
-      try {
-        const storedUser = localStorage.getItem(
-          process.env.REACT_APP_LOCALHOST_KEY,
-        );
-        if (!storedUser) return;
-        const data = JSON.parse(storedUser);
-        const response = await axios.post(recieveMessageRoute, {
-          from: data._id,
-          to: currentChat._id,
-        });
-        setMessages(response.data);
-      } catch (error) {
-        console.error("Error fetching messages:", error);
-      }
-    };
-
-    if (currentChat) {
-      fetchMessages();
+  const fetchMessages = async () => {
+    try {
+      const storedUser = localStorage.getItem(
+        process.env.REACT_APP_LOCALHOST_KEY,
+      );
+      if (!storedUser || !currentChat) return;
+      const data = JSON.parse(storedUser);
+      const response = await axios.post(recieveMessageRoute, {
+        from: data._id,
+        to: currentChat._id,
+      });
+      setMessages(response.data);
+    } catch (error) {
+      console.error("Error fetching messages:", error);
     }
-  }, [currentChat]);
+  };
 
   useEffect(() => {
-    const getCurrentChat = async () => {
-      if (currentChat) {
-        await JSON.parse(
-          localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY),
-        )._id;
-      }
+    if (!currentChat) return;
+
+    fetchMessages();
+
+    const intervalId = setInterval(() => {
+      fetchMessages();
+    }, 2000);
+
+    return () => {
+      clearInterval(intervalId);
     };
-    getCurrentChat();
   }, [currentChat]);
 
   const handleSendMsg = async (msg) => {
     const data = JSON.parse(
       localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY),
     );
-    if (!data || !currentChat || !socket) return;
-    socket.emit("send-msg", {
-      to: currentChat._id,
-      from: data._id,
-      msg,
-    });
+    if (!data || !currentChat) return;
     await axios.post(sendMessageRoute, {
       from: data._id,
       to: currentChat._id,
       message: msg,
     });
 
-    const msgs = [...messages, { fromSelf: true, message: msg }];
-    setMessages(msgs);
+    setMessages((prev) => [...prev, { fromSelf: true, message: msg }]);
   };
-
-  useEffect(() => {
-    if (!socket) return;
-    const handleMsgReceive = (payload) => {
-      // payload may be a string (older server) or an object { from, msg }
-      const from = payload && typeof payload === "object" ? payload.from : null;
-      const messageText =
-        payload && typeof payload === "object" && payload.msg !== undefined
-          ? payload.msg
-          : payload;
-      const incoming = { fromSelf: false, message: messageText, from };
-      // store arrivalMessage for other flows (unread, notifications)
-      setArrivalMessage(incoming);
-
-      // if the currently open chat is the sender, append immediately
-      const openChat = currentChatRef.current;
-      if (openChat && String(openChat._id) === String(from)) {
-        setMessages((prev) => {
-          const exists = prev.some(
-            (m) =>
-              m.message === incoming.message &&
-              m.fromSelf === incoming.fromSelf,
-          );
-          return exists ? prev : [...prev, incoming];
-        });
-      }
-    };
-
-    socket.on("msg-recieve", handleMsgReceive);
-    return () => {
-      socket.off && socket.off("msg-recieve", handleMsgReceive);
-    };
-  }, [socket]);
-
-  useEffect(() => {
-    if (!arrivalMessage) return;
-    if (!currentChat || String(currentChat._id) !== String(arrivalMessage.from))
-      return;
-    setMessages((prev) => {
-      const exists = prev.some(
-        (m) =>
-          m.message === arrivalMessage.message &&
-          m.fromSelf === arrivalMessage.fromSelf,
-      );
-      return exists ? prev : [...prev, arrivalMessage];
-    });
-  }, [arrivalMessage, currentChat]);
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
-
-  // keep a ref of currentChat so socket handler has latest value
-  useEffect(() => {
-    currentChatRef.current = currentChat;
-  }, [currentChat]);
 
   return (
     <div className="chat-container-inner">

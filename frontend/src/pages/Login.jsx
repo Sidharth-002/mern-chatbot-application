@@ -25,7 +25,6 @@ export default function Login() {
     event.preventDefault();
     const { data } = await axios.post(loginRoute, values);
     if (data.status === false) {
-      console.log(data);
       toast.error(data.msg, toastOptions);
     }
     if (data.status === true) {

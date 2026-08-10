@@ -6,7 +6,6 @@ export default function Welcome() {
   const navigate = useNavigate();
 
   const [userName, setUserName] = useState("");
-  console.log(userName);
   useEffect(() => {
     const storedUser = localStorage.getItem(
       process.env.REACT_APP_LOCALHOST_KEY,
@@ -16,7 +15,6 @@ export default function Welcome() {
       return;
     }
     try {
-      console.log("Stored user:", JSON.parse(storedUser).username);
       setUserName(JSON.parse(storedUser).username);
     } catch (error) {
       console.error("Failed to parse stored user", error);

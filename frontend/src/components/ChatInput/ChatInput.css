@@ -188,6 +188,7 @@
   }
 
   .chat-input-container .button-container {
+    display: none;
     width: auto;
     justify-content: center;
   }
