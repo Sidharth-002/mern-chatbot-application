@@ -18,6 +18,11 @@ export default function SetAvatar() {
   useEffect(() => {
     const user = localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY);
     if (!user) navigate("/login");
+
+    const userData = JSON.parse(user);
+    if (userData.avatarImage) {
+      navigate("/");
+    }
   }, [navigate]);
 
   const generateRandomName = () => Math.random().toString(36).substring(2, 10);

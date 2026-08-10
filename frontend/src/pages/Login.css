@@ -4,8 +4,10 @@
   justify-content: center;
   gap: 1rem;
   align-items: center;
-  background-color: #131324;
   min-height: 100%;
+  background:
+    linear-gradient(rgba(24, 26, 32, 0.78), rgba(24, 26, 32, 0.78)),
+    url("../assets/background.webp") center/cover fixed no-repeat;
 }
 
 .login-page .form-container {
@@ -18,9 +20,10 @@
   display: flex;
   flex-direction: column;
   gap: 2rem;
-  background-color: #00000076;
+  background: rgba(32, 36, 43, 0.92);
   border-radius: 2rem;
   padding: 5rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.28);
 }
 
 .login-page .brand {
@@ -42,7 +45,7 @@
 .login-page .form input {
   background-color: transparent;
   padding: 1rem;
-  border: 0.1rem solid #4e0eff;
+  border: 0.1rem solid #4f5662;
   border-radius: 0.4rem;
   color: white;
   width: 100%;
@@ -51,12 +54,12 @@
 }
 
 .login-page .form input:focus {
-  border: 0.1rem solid #997af0;
+  border: 0.1rem solid #5b6677;
   outline: none;
 }
 
 .login-page .form button {
-  background-color: #4e0eff;
+  background-color: #4f5662;
   color: white;
   padding: 1rem 2rem;
   border: none;
@@ -68,7 +71,7 @@
 }
 
 .login-page .form button:hover {
-  background-color: #4e0eff;
+  background-color: #5a6476;
 }
 
 .login-page .form .auth-text {
@@ -77,7 +80,7 @@
 }
 
 .login-page .form .auth-text a {
-  color: #4e0eff;
+  color: #8ea3b7;
   text-decoration: none;
   font-weight: bold;
 }

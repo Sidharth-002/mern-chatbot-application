@@ -64,20 +64,12 @@ module.exports.register = async (req, res, next) => {
 
 module.exports.getAllUsers = async (req, res, next) => {
   try {
-    const users = await User.find({ _id: { $ne: req.params.id } }).select([
-      "email",
-      "username",
-      "avatarImage",
-      "_id",
-    ]);
+    const users = await User.find(
+      { _id: { $ne: req.params.id } },
+      { password: 0, email: 0, __v: 0 },
+    );
 
-    const userWithoutPassword = users.map((user) => {
-      const userData = { ...user._doc };
-      delete userData.password;
-      return userData;
-    });
-
-    return res.json(userWithoutPassword);
+    return res.json(users);
   } catch (ex) {
     next(ex);
   }

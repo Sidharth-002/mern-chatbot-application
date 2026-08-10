@@ -4,11 +4,27 @@
   align-items: center;
   flex-direction: column;
   gap: 3rem;
-  background-color: #131324;
   min-height: 100%;
   width: 100%;
   padding: 2rem 1rem 3rem;
   box-sizing: border-box;
+  position: relative;
+  background:
+    linear-gradient(rgba(24, 26, 32, 0.82), rgba(24, 26, 32, 0.82)),
+    url("../../assets/background.jpg") center/cover fixed no-repeat;
+}
+
+.container::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.08;
+  background: radial-gradient(
+    circle at center,
+    rgba(255, 255, 255, 0.06),
+    transparent 22%
+  );
+  pointer-events: none;
 }
 
 .container .loader {
@@ -48,11 +64,11 @@
 }
 
 .container .avatars .selected {
-  border: 0.4rem solid #4e0eff;
+  border: 0.4rem solid #5a6677;
 }
 
 .container .submit-btn {
-  background-color: #4e0eff;
+  background-color: #4f5662;
   color: white;
   padding: 1rem 2rem;
   border: none;
@@ -64,7 +80,7 @@
 }
 
 .container .submit-btn:hover {
-  background-color: #3c0edc;
+  background-color: #5a6476;
 }
 
 @media (max-width: 480px) {

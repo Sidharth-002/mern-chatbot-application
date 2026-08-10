@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import Logo from "../assets/logo.png";
-import "./index.css";
+import Logo from "../../assets/logo.png";
+import "./Contacts.css";
 
 export default function Contacts({ contacts, changeChat }) {
   const [currentUserName, setCurrentUserName] = useState(undefined);
@@ -23,7 +23,7 @@ export default function Contacts({ contacts, changeChat }) {
   return (
     <>
       {currentUserImage && currentUserImage && (
-        <div class="container-div">
+        <div className="container-div">
           <div className="brand">
             <img src={Logo} alt="logo" />
             <h3>Doddi Bot</h3>

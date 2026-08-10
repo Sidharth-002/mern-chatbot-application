@@ -1,0 +1,146 @@
+.chat-input-container {
+  display: grid;
+  align-items: center;
+  grid-template-columns: 5% 95%;
+  background-color: #080420;
+  padding: 0 2rem;
+}
+
+/* Tablet */
+@media screen and (min-width: 720px) and (max-width: 1080px) {
+  .chat-input-container {
+    padding: 0 1rem;
+    gap: 1rem;
+  }
+}
+
+/* Button container */
+.chat-input-container .button-container {
+  display: flex;
+  align-items: center;
+  color: white;
+  gap: 1rem;
+}
+
+/* Emoji */
+.chat-input-container .button-container .emoji {
+  position: relative;
+}
+
+.chat-input-container .button-container .emoji svg {
+  font-size: 1.5rem;
+  color: #ffff00c8;
+  cursor: pointer;
+}
+
+/* Emoji picker */
+.chat-input-container .button-container .emoji .emoji-picker-react {
+  position: absolute;
+  top: -350px;
+  background-color: #080420;
+  box-shadow: 0 5px 10px #9a86f3;
+  border-color: #9a86f3;
+}
+
+/* Scrollbar */
+.chat-input-container
+  .button-container
+  .emoji
+  .emoji-picker-react
+  .emoji-scroll-wrapper::-webkit-scrollbar {
+  background-color: #080420;
+  width: 5px;
+}
+
+.chat-input-container
+  .button-container
+  .emoji
+  .emoji-picker-react
+  .emoji-scroll-wrapper::-webkit-scrollbar-thumb {
+  background-color: #9a86f3;
+}
+
+/* Emoji categories */
+.chat-input-container
+  .button-container
+  .emoji
+  .emoji-picker-react
+  .emoji-categories
+  button {
+  filter: contrast(0);
+}
+
+/* Emoji search */
+.chat-input-container
+  .button-container
+  .emoji
+  .emoji-picker-react
+  .emoji-search {
+  background-color: transparent;
+  border-color: #9a86f3;
+}
+
+/* Emoji group */
+.chat-input-container
+  .button-container
+  .emoji
+  .emoji-picker-react
+  .emoji-group:before {
+  background-color: #080420;
+}
+
+/* Input container */
+.chat-input-container .input-container {
+  width: 100%;
+  border-radius: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  background-color: #ffffff34;
+}
+
+/* Input */
+.chat-input-container .input-container input {
+  width: 90%;
+  height: 60%;
+  background-color: transparent;
+  color: white;
+  border: none;
+  padding-left: 1rem;
+  font-size: 1.2rem;
+}
+
+.chat-input-container .input-container input::selection {
+  background-color: #9a86f3;
+}
+
+.chat-input-container .input-container input:focus {
+  outline: none;
+}
+
+/* Button */
+.chat-input-container .input-container button {
+  padding: 0.3rem 2rem;
+  border-radius: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #9a86f3;
+  border: none;
+}
+
+.chat-input-container .input-container button svg {
+  font-size: 2rem;
+  color: white;
+}
+
+/* Tablet button */
+@media screen and (min-width: 720px) and (max-width: 1080px) {
+  .chat-input-container .input-container button {
+    padding: 0.3rem 1rem;
+  }
+
+  .chat-input-container .input-container button svg {
+    font-size: 1rem;
+  }
+}

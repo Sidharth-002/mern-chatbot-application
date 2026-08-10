@@ -1,0 +1,97 @@
+/* Container */
+.chat-container-inner {
+  display: grid;
+  grid-template-rows: 10% 80% 10%;
+  gap: 0.1rem;
+  overflow: hidden;
+}
+
+/* Tablet */
+@media screen and (min-width: 720px) and (max-width: 1080px) {
+  .chat-container-inner {
+    grid-template-rows: 15% 70% 15%;
+  }
+}
+
+/* Header */
+.chat-container-inner .chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2rem;
+}
+
+/* User details */
+.chat-container-inner .chat-header .user-details {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.chat-container-inner .chat-header .user-details .avatar img {
+  height: 3rem;
+}
+
+.chat-container-inner .chat-header .user-details .username h3 {
+  color: white;
+}
+
+/* Messages */
+.chat-container-inner .chat-messages {
+  padding: 1rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  overflow: auto;
+}
+
+/* Scrollbar */
+.chat-container-inner .chat-messages::-webkit-scrollbar {
+  width: 0.2rem;
+}
+
+.chat-container-inner .chat-messages::-webkit-scrollbar-thumb {
+  background-color: #ffffff39;
+  width: 0.1rem;
+  border-radius: 1rem;
+}
+
+/* Message */
+.chat-container-inner .chat-messages .message {
+  display: flex;
+  align-items: center;
+}
+
+.chat-container-inner .chat-messages .message .content {
+  max-width: 40%;
+  overflow-wrap: break-word;
+  padding: 1rem;
+  font-size: 1.1rem;
+  border-radius: 1rem;
+  color: #d1d1d1;
+}
+
+/* Tablet message width */
+@media screen and (min-width: 720px) and (max-width: 1080px) {
+  .chat-container-inner .chat-messages .message .content {
+    max-width: 70%;
+  }
+}
+
+/* Sent */
+.chat-container-inner .chat-messages .sended {
+  justify-content: flex-end;
+}
+
+.chat-container-inner .chat-messages .sended .content {
+  background-color: #4f04ff21;
+}
+
+/* Received */
+.chat-container-inner .chat-messages .recieved {
+  justify-content: flex-start;
+}
+
+.chat-container-inner .chat-messages .recieved .content {
+  background-color: #9900ff20;
+}

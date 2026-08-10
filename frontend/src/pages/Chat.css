@@ -6,15 +6,38 @@
   justify-content: center;
   gap: 1rem;
   align-items: center;
-  background-color: #131324;
+  background:
+    linear-gradient(rgba(24, 26, 32, 0.74), rgba(24, 26, 32, 0.74)),
+    url("../assets/background.jpg") center/cover fixed no-repeat;
 }
 
 .chat-page .chat-container {
   height: 85vh;
   width: 85vw;
-  background-color: #00000076;
+  background: rgba(32, 36, 43, 0.9);
   display: grid;
   grid-template-columns: 25% 75%;
+  position: relative;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+}
+
+.chat-page .chat-container::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(106, 115, 128, 0.12),
+      transparent 18%
+    ),
+    radial-gradient(
+      circle at left center,
+      rgba(82, 90, 101, 0.08),
+      transparent 24%
+    );
+  pointer-events: none;
 }
 
 @media screen and (min-width: 720px) and (max-width: 1080px) {

@@ -2,7 +2,27 @@
   display: grid;
   grid-template-rows: 10% 75% 15%;
   overflow: hidden;
-  background-color: #080420;
+  position: relative;
+  background: linear-gradient(135deg, #1b2128 0%, #181a20 45%, #20232d 100%);
+  background-size: 200% 200%;
+  animation: drift 24s ease infinite;
+}
+.container-div::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(124, 133, 148, 0.18),
+      transparent 24%
+    ),
+    radial-gradient(
+      circle at bottom right,
+      rgba(82, 92, 102, 0.14),
+      transparent 18%
+    );
+  pointer-events: none;
 }
 .container-div .brand {
   display: flex;
@@ -23,13 +43,12 @@
   align-items: center;
   overflow: auto;
   gap: 0.8rem;
-
-  .selected {
-    background-color: #9a86f3;
-  }
+}
+.container-div .contacts .selected {
+  background-color: rgba(255, 255, 255, 0.12);
 }
 .container-div .contact {
-  background-color: #ffffff34;
+  background-color: #24262b;
   min-height: 5rem;
   cursor: pointer;
   width: 90%;
@@ -48,14 +67,14 @@
 }
 .container-div .contacts::-webkit-scrollbar {
   width: 0.2rem;
-  &-thumb {
-    background-color: #ffffff39;
-    width: 0.1rem;
-    border-radius: 1rem;
-  }
+}
+.container-div .contacts::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.2);
+  width: 0.1rem;
+  border-radius: 1rem;
 }
 .container-div .current-user {
-  background-color: #0d0d30;
+  background-color: #1f2228;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -70,9 +89,7 @@
 }
 
 @media screen and (min-width: 720px) and (max-width: 1080px) {
-  .container-div .current-user .username {
-    h2 {
-      font-size: 1rem;
-    }
+  .container-div .current-user .username h2 {
+    font-size: 1rem;
   }
 }
