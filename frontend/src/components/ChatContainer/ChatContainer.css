@@ -47,23 +47,11 @@
   .chat-container-inner .chat-header {
     padding: 0 1rem;
     gap: 0.75rem;
+    flex-shrink: 0;
   }
 
   .chat-container-inner .chat-header .menu-button {
     display: flex;
-  }
-}
-
-@media screen and (max-width: 720px) {
-  .chat-container-inner .chat-header {
-    padding: 0 1rem;
-    gap: 0.75rem;
-  }
-}
-
-@media screen and (max-width: 720px) {
-  .chat-container-inner .chat-header {
-    padding: 0 1rem;
   }
 }
 
@@ -93,14 +81,11 @@
 
 @media screen and (max-width: 720px) {
   .chat-container-inner .chat-messages {
-    padding: 0.75rem 0.85rem;
-    gap: 0.75rem;
-  }
-}
-
-@media screen and (max-width: 720px) {
-  .chat-container-inner .chat-messages {
     padding: 0.8rem 1rem;
+    gap: 0.75rem;
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
   }
 }
 

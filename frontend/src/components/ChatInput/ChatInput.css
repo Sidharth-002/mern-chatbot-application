@@ -185,6 +185,7 @@
     align-items: center;
     padding: 0.65rem 0.95rem 0.85rem;
     gap: 0.7rem;
+    flex-shrink: 0;
   }
 
   .chat-input-container .button-container {
