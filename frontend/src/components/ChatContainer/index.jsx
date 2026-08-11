@@ -9,6 +9,9 @@ import { sendMessageRoute, recieveMessageRoute } from "../../utils/APIRoutes";
 export default function ChatContainer({ currentChat, onToggleContacts }) {
   const [messages, setMessages] = useState([]);
   const scrollRef = useRef();
+  const messagesContainerRef = useRef(null);
+  const isAtBottomRef = useRef(true);
+  const prevMessagesLengthRef = useRef(0);
 
   const fetchMessages = useCallback(async () => {
     try {
@@ -55,9 +58,43 @@ export default function ChatContainer({ currentChat, onToggleContacts }) {
     setMessages((prev) => [...prev, { fromSelf: true, message: msg }]);
   };
 
+  // Auto-scroll only when appropriate: when a new message arrives and
+  // the user is at (or near) the bottom, or when the last message is from self.
   useEffect(() => {
-    scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+    const prevLen = prevMessagesLengthRef.current || 0;
+    const newLen = messages.length;
+    const lastMessage = messages[newLen - 1];
+
+    const newMessageArrived = newLen > prevLen;
+
+    const shouldScroll =
+      newMessageArrived &&
+      (isAtBottomRef.current || (lastMessage && lastMessage.fromSelf));
+
+    if (shouldScroll) {
+      scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+
+    prevMessagesLengthRef.current = newLen;
   }, [messages]);
+
+  // Track whether the user has scrolled away from the bottom of the messages list.
+  useEffect(() => {
+    const el = messagesContainerRef.current;
+    if (!el) return undefined;
+
+    const onScroll = () => {
+      const { scrollTop, clientHeight, scrollHeight } = el;
+      // within 48px of the bottom -> considered at bottom
+      isAtBottomRef.current = scrollTop + clientHeight >= scrollHeight - 48;
+    };
+
+    el.addEventListener("scroll", onScroll, { passive: true });
+    // initialize
+    onScroll();
+
+    return () => el.removeEventListener("scroll", onScroll);
+  }, [messagesContainerRef, currentChat]);
 
   return (
     <div className="chat-container-inner">
@@ -82,7 +119,7 @@ export default function ChatContainer({ currentChat, onToggleContacts }) {
         </div>
         <Logout />
       </div>
-      <div className="chat-messages">
+      <div className="chat-messages" ref={messagesContainerRef}>
         {messages.map((message) => {
           return (
             <div ref={scrollRef} key={uuidv4()}>
