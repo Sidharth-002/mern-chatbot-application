@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Logo from "../../assets/logo.png";
+import Logout from "../Logout";
 import "./Contacts.css";
 import { IoCloseOutline } from "react-icons/io5";
 
@@ -82,15 +83,20 @@ export default function Contacts({
             })}
           </div>
           <div className="current-user">
-            <div className="avatar">
-              <img
-                src={`data:image/svg+xml;base64,${currentUserImage}`}
-                alt="avatar"
-              />
+            <div className="current-user-info">
+              <div className="avatar">
+                <img
+                  src={`data:image/svg+xml;base64,${currentUserImage}`}
+                  alt="avatar"
+                />
+              </div>
+              <div className="username">
+                <h2>{currentUserName}</h2>
+                <p>Online now</p>
+              </div>
             </div>
-            <div className="username">
-              <h2>{currentUserName}</h2>
-              <p>Online now</p>
+            <div className="current-user-action">
+              <Logout />
             </div>
           </div>
         </div>

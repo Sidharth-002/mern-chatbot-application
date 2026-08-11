@@ -14,6 +14,21 @@
 
 .mobile-menu-bar {
   display: none;
+  width: 100%;
+  align-items: center;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+  padding: 1rem 2rem;
+}
+
+.mobile-menu-right {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mobile-menu-btn {
+  display: none;
 }
 
 @media screen and (max-width: 720px) {
@@ -34,6 +49,20 @@
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     padding: 0.7rem 1rem;
     gap: 1rem;
+  }
+
+  .mobile-menu-btn {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 0.8rem;
+    border: none;
+    background: rgba(255, 255, 255, 0.08);
+    color: white;
+    font-size: 1.4rem;
+    cursor: pointer;
   }
 
   .mobile-menu-bar span {

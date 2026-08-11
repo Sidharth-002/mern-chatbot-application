@@ -164,10 +164,22 @@
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 1rem;
   padding: 1rem 1rem 1.1rem;
   margin: 0 1rem;
   border-radius: 0 0 1rem 1rem;
+}
+
+.container-div .current-user-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.container-div .current-user-action {
+  display: flex;
+  align-items: center;
 }
 .container-div .current-user .avatar {
   min-width: 3.6rem;

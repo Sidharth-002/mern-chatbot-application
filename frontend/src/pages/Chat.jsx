@@ -8,6 +8,7 @@ import { allUsersRoute } from "../utils/APIRoutes";
 import ChatContainer from "../components/ChatContainer";
 import Contacts from "../components/Contacts";
 import Welcome from "../components/Welcome";
+import Logout from "../components/Logout";
 import "./Chat.css";
 
 export default function Chat() {
@@ -76,7 +77,9 @@ export default function Chat() {
             >
               ☰
             </button>
-            {/* <span>Chats</span> */}
+            <div className="mobile-menu-right">
+              <Logout />
+            </div>
           </div>
         )}
         <div className="chat-container">
