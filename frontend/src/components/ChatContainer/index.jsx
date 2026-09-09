@@ -4,6 +4,7 @@ import ChatInput from "../ChatInput";
 import Logout from "../Logout";
 import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
+import { socket } from "../../utils/socket";
 import { sendMessageRoute, recieveMessageRoute } from "../../utils/APIRoutes";
 
 export default function ChatContainer({ currentChat, onToggleContacts }) {
@@ -44,12 +45,37 @@ export default function ChatContainer({ currentChat, onToggleContacts }) {
     };
   }, [currentChat, fetchMessages]);
 
+  useEffect(() => {
+    const handleReceive = (data) => {
+      // expected shape: { from, to, message }
+      if (!data) return;
+      // append received message
+      setMessages((prev) => [
+        ...prev,
+        { fromSelf: false, message: data.message },
+      ]);
+    };
+
+    socket.on("receive-message", handleReceive);
+    return () => {
+      socket.off("receive-message", handleReceive);
+    };
+  }, []);
+
   const handleSendMsg = async (msg) => {
     const data = JSON.parse(
       localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY),
     );
     if (!data || !currentChat) return;
+    // persist to backend
     await axios.post(sendMessageRoute, {
+      from: data._id,
+      to: currentChat._id,
+      message: msg,
+    });
+
+    // emit via websocket for real-time delivery
+    socket.emit("send-message", {
       from: data._id,
       to: currentChat._id,
       message: msg,

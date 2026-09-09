@@ -1,6 +1,7 @@
 const User = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const { registerSchema, loginSchema } = require("../validators/authValidator");
+const jwt = require("jsonwebtoken");
 
 module.exports.login = async (req, res, next) => {
   try {
@@ -23,7 +24,13 @@ module.exports.login = async (req, res, next) => {
     const userData = { ...user._doc };
     delete userData.password;
 
-    return res.json({ status: true, user: userData });
+    const token = jwt.sign(
+      { id: user._id, username: user.username },
+      process.env.JWT_SECRET || "changeme",
+      { expiresIn: "7d" },
+    );
+
+    return res.json({ status: true, user: userData, token });
   } catch (ex) {
     next(ex);
   }
@@ -55,7 +62,13 @@ module.exports.register = async (req, res, next) => {
     });
     const userData = { ...user._doc };
     delete userData.password;
-    return res.json({ status: true, user: userData });
+    const token = jwt.sign(
+      { id: user._id, username: user.username },
+      process.env.JWT_SECRET || "changeme",
+      { expiresIn: "7d" },
+    );
+
+    return res.json({ status: true, user: userData, token });
   } catch (ex) {
     next(ex);
   }

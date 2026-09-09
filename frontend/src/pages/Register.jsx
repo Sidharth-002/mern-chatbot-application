@@ -5,6 +5,8 @@ import Logo from "../assets/logo.png";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { registerRoute } from "../utils/APIRoutes";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 import "./Register.css";
 import { toastOptions } from "../utils/toast";
 
@@ -22,6 +24,7 @@ export default function Register() {
       navigate("/");
     }
   }, [navigate]);
+  const { dispatch } = useContext(AuthContext);
 
   const handleChange = (event) => {
     setValues({ ...values, [event.target.name]: event.target.value });
@@ -34,10 +37,10 @@ export default function Register() {
     if (!data.status) {
       toast.error(data.msg, toastOptions);
     } else {
-      localStorage.setItem(
-        process.env.REACT_APP_LOCALHOST_KEY,
-        JSON.stringify(data.user),
-      );
+      dispatch({
+        type: "LOGIN",
+        payload: { user: data.user, token: data.token },
+      });
       navigate("/");
     }
   };
@@ -52,7 +55,7 @@ export default function Register() {
         >
           <div className="brand">
             <img src={Logo} alt="logo" />
-            <h1>Doddi Bot</h1>
+            <h1>KC Bot</h1>
           </div>
           <input
             type="text"

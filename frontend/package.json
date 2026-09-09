@@ -17,6 +17,8 @@
     "react-scripts": "5.0.0",
     "react-toastify": "^8.1.1",
     "socket.io-client": "^4.4.1",
+    "@reduxjs/toolkit": "^1.9.5",
+    "react-redux": "^8.1.2",
     "styled-components": "^5.3.3",
     "uuid": "^8.3.2",
     "web-vitals": "^2.1.4"

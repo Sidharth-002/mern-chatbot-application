@@ -35,7 +35,7 @@ export default function Contacts({
             <div className="brand-left">
               <img src={Logo} alt="logo" />
               <div className="brand-text">
-                <h3>Doddi Bot</h3>
+                <h3>KC Bot</h3>
                 <p>Stay connected with your contacts</p>
               </div>
             </div>

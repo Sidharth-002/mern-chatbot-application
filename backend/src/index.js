@@ -4,6 +4,8 @@ const mongoose = require("mongoose");
 const authRoutes = require("./routes/auth");
 const messageRoutes = require("./routes/messages");
 const app = express();
+const http = require("http");
+const { Server } = require("socket.io");
 require("dotenv").config();
 
 const PORT = process.env.PORT || 5000;
@@ -31,4 +33,27 @@ app.get("/ping", (_req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 
-app.listen(PORT, () => console.log(`Server started on ${PORT}`));
+const server = http.createServer(app);
+
+const io = new Server(server, {
+  cors: {
+    origin: FRONTEND_URL,
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
+});
+
+io.on("connection", (socket) => {
+  console.log("a user connected:", socket.id);
+
+  socket.on("send-message", (data) => {
+    // broadcast to all connected sockets for now
+    io.emit("receive-message", data);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("user disconnected:", socket.id);
+  });
+});
+
+server.listen(PORT, () => console.log(`Server started on ${PORT}`));
