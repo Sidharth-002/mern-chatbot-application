@@ -1,6 +1,6 @@
 import { io } from "socket.io-client";
 
-const SERVER_URL = process.env.REACT_APP_SERVER_URL || "http://localhost:5000";
+const SERVER_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
 let socketInstance = null;
 
