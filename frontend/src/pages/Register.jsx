@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import Logo from "../assets/logo.png";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { registerRoute } from "../utils/APIRoutes";
+import apiClient from "../utils/apiClient";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import "./Register.css";
@@ -19,11 +19,6 @@ export default function Register() {
     confirmPassword: "",
   });
 
-  useEffect(() => {
-    if (localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)) {
-      navigate("/");
-    }
-  }, [navigate]);
   const { dispatch } = useContext(AuthContext);
 
   const handleChange = (event) => {
@@ -32,16 +27,21 @@ export default function Register() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const { data } = await axios.post(registerRoute, values);
-
-    if (!data.status) {
-      toast.error(data.msg, toastOptions);
-    } else {
+    try {
+      const { data } = await apiClient.post(registerRoute, values);
+      if (!data.status) {
+        toast.error(data.msg || "Registration failed", toastOptions);
+        return;
+      }
       dispatch({
         type: "LOGIN",
-        payload: { user: data.user, token: data.token },
+        payload: { user: data.user, token: data.accessToken },
       });
       navigate("/");
+    } catch (err) {
+      const msg =
+        err?.response?.data?.msg || err.message || "Registration failed";
+      toast.error(msg, toastOptions);
     }
   };
 

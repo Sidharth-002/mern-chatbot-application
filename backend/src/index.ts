@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const http = require("http");
 const { Server } = require("socket.io");
 const authRoutes = require("./routes/auth");
+const cookieParser = require("cookie-parser");
 const messageRoutes = require("./routes/messages");
 require("dotenv").config();
 
@@ -14,6 +15,7 @@ const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3000";
 
 app.use(cors({ origin: FRONTEND_URL, credentials: true }));
 app.use(express.json());
+app.use(cookieParser());
 
 mongoose
   .connect(process.env.MONGO_URL, {

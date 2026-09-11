@@ -1,4 +1,4 @@
-.container {
+.container-welcome {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -11,30 +11,30 @@
   max-width: 100%;
 }
 
-.container img {
+.container-welcome img {
   height: 18rem;
   max-width: 100%;
 }
 
-.container span {
+.container-welcome span {
   color: #a066ff;
 }
 
 @media screen and (max-width: 720px) {
-  .container {
+  .container-welcome {
     padding: 1.2rem 0.75rem;
     gap: 1rem;
   }
 
-  .container img {
+  .container-welcome img {
     height: 14rem;
   }
 
-  .container h1 {
+  .container-welcome h1 {
     font-size: 1.8rem;
   }
 
-  .container h3 {
+  .container-welcome h3 {
     font-size: 1rem;
     line-height: 1.5;
     max-width: 24rem;

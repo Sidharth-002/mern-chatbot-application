@@ -1,34 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useContext } from "react";
+import { AuthContext } from "../../context/AuthContext";
 import Robot from "../../assets/hello.svg";
-import { useNavigate } from "react-router-dom";
 import "./Welcome.css";
+
 export default function Welcome() {
-  const navigate = useNavigate();
-
-  const [userName, setUserName] = useState("");
-  useEffect(() => {
-    const storedUser = localStorage.getItem(
-      process.env.REACT_APP_LOCALHOST_KEY,
-    );
-    if (!storedUser) {
-      navigate("/login");
-      return;
-    }
-    try {
-      setUserName(JSON.parse(storedUser).username);
-    } catch (error) {
-      console.error("Failed to parse stored user", error);
-      localStorage.removeItem(process.env.REACT_APP_LOCALHOST_KEY);
-      navigate("/login");
-    }
-  }, [navigate]);
-
+  const { state } = useContext(AuthContext);
   return (
     <>
-      <div className="container">
+      <div className="container-welcome">
         <img src={Robot} alt="Hello logo" />
         <h1>
-          Welcome, <span>{userName}!</span>
+          Welcome, <span>{state?.user?.username}!</span>
         </h1>
         <h3>Please select a chat to Start messaging.</h3>
       </div>

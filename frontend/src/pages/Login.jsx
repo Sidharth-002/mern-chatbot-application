@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import Logo from "../assets/logo.png";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { loginRoute } from "../utils/APIRoutes";
+import apiClient from "../utils/apiClient";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import "./Login.css";
@@ -14,11 +14,6 @@ export default function Login() {
   const navigate = useNavigate();
   const [values, setValues] = useState({ username: "", password: "" });
   const { dispatch } = useContext(AuthContext);
-  useEffect(() => {
-    if (localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)) {
-      navigate("/");
-    }
-  }, [navigate]);
 
   const handleChange = (event) => {
     setValues({ ...values, [event.target.name]: event.target.value });
@@ -26,17 +21,21 @@ export default function Login() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const { data } = await axios.post(loginRoute, values);
-    if (data.status === false) {
-      toast.error(data.msg, toastOptions);
-    }
-    if (data.status === true) {
-      // store user+token via context reducer
+    try {
+      const { data } = await apiClient.post(loginRoute, values);
+      if (!data?.status) {
+        toast.error(data?.msg || "Login failed", toastOptions);
+        return;
+      }
+
       dispatch({
         type: "LOGIN",
-        payload: { user: data.user, token: data.token },
+        payload: { user: data.user, token: data.accessToken },
       });
       navigate("/");
+    } catch (err) {
+      const msg = err?.response?.data?.msg || err.message || "Login failed";
+      toast.error(msg, toastOptions);
     }
   };
 

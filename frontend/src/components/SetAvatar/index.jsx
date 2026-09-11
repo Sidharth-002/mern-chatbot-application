@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useEffect, useState, useContext } from "react";
 import loader from "../../assets/loader.gif";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 import { setAvatarRoute } from "../../utils/APIRoutes";
+import apiClient from "../../utils/apiClient";
+import { AuthContext } from "../../context/AuthContext";
 import multiavatar from "@multiavatar/multiavatar/esm";
 import { toastOptions } from "../../utils/toast";
 import "./SetAvatar.css";
@@ -14,16 +15,8 @@ export default function SetAvatar() {
   const [avatars, setAvatars] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedAvatar, setSelectedAvatar] = useState(undefined);
-
-  useEffect(() => {
-    const user = localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY);
-    if (!user) navigate("/login");
-
-    const userData = JSON.parse(user);
-    if (userData.avatarImage) {
-      navigate("/");
-    }
-  }, [navigate]);
+  const authContext = useContext(AuthContext);
+  const { state, dispatch } = authContext;
 
   const generateRandomName = () => Math.random().toString(36).substring(2, 10);
 
@@ -49,24 +42,30 @@ export default function SetAvatar() {
       return;
     }
 
-    const user = await JSON.parse(
-      localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY),
-    );
+    const user = state?.user;
 
-    const { data } = await axios.post(`${setAvatarRoute}/${user._id}`, {
-      image: avatars[selectedAvatar],
-    });
+    try {
+      const { data } = await apiClient.post(`${setAvatarRoute}/${user._id}`, {
+        image: avatars[selectedAvatar],
+      });
 
-    if (data.isSet) {
-      user.isAvatarImageSet = true;
-      user.avatarImage = data.image;
-      localStorage.setItem(
-        process.env.REACT_APP_LOCALHOST_KEY,
-        JSON.stringify(user),
-      );
-      navigate("/");
-    } else {
-      toast.error("Error setting avatar. Please try again.", toastOptions);
+      if (data.isSet) {
+        user.isAvatarImageSet = true;
+        user.avatarImage = data.image;
+        dispatch({
+          type: "LOGIN",
+          payload: { user, token: state?.token },
+        });
+        navigate("/");
+      } else {
+        toast.error("Error setting avatar. Please try again.", toastOptions);
+      }
+    } catch (error) {
+      const msg =
+        error?.response?.data?.msg ||
+        error?.message ||
+        "Error setting avatar. Please try again.";
+      toast.error(msg, toastOptions);
     }
   };
 

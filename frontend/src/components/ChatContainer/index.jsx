@@ -1,126 +1,175 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useContext,
+} from "react";
 import "./ChatContainer.css";
 import ChatInput from "../ChatInput";
 import Logout from "../Logout";
 import { v4 as uuidv4 } from "uuid";
-import axios from "axios";
-import { socket } from "../../utils/socket";
+import { getSocket } from "../../utils/socket";
+import { AuthContext } from "../../context/AuthContext";
+import apiClient from "../../utils/apiClient";
 import { sendMessageRoute, recieveMessageRoute } from "../../utils/APIRoutes";
 
 export default function ChatContainer({ currentChat, onToggleContacts }) {
   const [messages, setMessages] = useState([]);
-  const scrollRef = useRef();
   const messagesContainerRef = useRef(null);
+  const topSentinelRef = useRef(null);
   const isAtBottomRef = useRef(true);
-  const prevMessagesLengthRef = useRef(0);
+  const [page, setPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const authContext = useContext(AuthContext);
 
-  const fetchMessages = useCallback(async () => {
-    try {
-      const storedUser = localStorage.getItem(
-        process.env.REACT_APP_LOCALHOST_KEY,
-      );
-      if (!storedUser || !currentChat) return;
-      const data = JSON.parse(storedUser);
-      const response = await axios.post(recieveMessageRoute, {
-        from: data._id,
-        to: currentChat._id,
-      });
-      setMessages(response.data);
-    } catch (error) {
-      console.error("Error fetching messages:", error);
-    }
-  }, [currentChat]);
+  const fetchMessages = useCallback(
+    async (pageToLoad = 0) => {
+      try {
+        const { state } = authContext;
+        const data = state?.user;
+        if (!data || !currentChat) return;
+
+        const limit = 20;
+        const { data: responseData } = await apiClient.post(
+          recieveMessageRoute,
+          {
+            from: data._id,
+            to: currentChat._id,
+            page: pageToLoad,
+            limit,
+          },
+        );
+
+        if (pageToLoad === 0) {
+          setMessages(responseData);
+          setHasMore(responseData.length === limit);
+          setPage(0);
+        } else {
+          setMessages((prev) => [...responseData, ...prev]);
+          setHasMore(responseData.length === limit);
+        }
+      } catch (error) {
+        const msg =
+          error?.response?.data?.msg ||
+          error?.message ||
+          "Failed to fetch messages";
+        console.error(msg);
+      }
+    },
+    [currentChat, authContext],
+  );
 
   useEffect(() => {
     if (!currentChat) return;
 
-    fetchMessages();
-
-    const intervalId = setInterval(() => {
-      fetchMessages();
-    }, 2000);
-
-    return () => {
-      clearInterval(intervalId);
-    };
+    setPage(0);
+    setHasMore(true);
+    fetchMessages(0);
   }, [currentChat, fetchMessages]);
 
   useEffect(() => {
     const handleReceive = (data) => {
-      // expected shape: { from, to, message }
       if (!data) return;
-      // append received message
-      setMessages((prev) => [
-        ...prev,
-        { fromSelf: false, message: data.message },
-      ]);
+      if (!currentChat) return;
+      const { from, to, message } = data;
+      const otherId = currentChat._id;
+      const { state } = authContext;
+      const me = state?.user?._id;
+
+      const isRelatedToChat = from === otherId && to === me;
+      if (isRelatedToChat) {
+        setMessages((prev) => {
+          return [...prev, { fromSelf: false, message }];
+        });
+      }
     };
 
-    socket.on("receive-message", handleReceive);
+    const s = getSocket();
+    s.on("receive-message", handleReceive);
     return () => {
-      socket.off("receive-message", handleReceive);
+      s.off("receive-message", handleReceive);
     };
-  }, []);
+  }, [authContext, currentChat]);
 
   const handleSendMsg = async (msg) => {
-    const data = JSON.parse(
-      localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY),
-    );
+    const { state } = authContext;
+    const data = state?.user;
     if (!data || !currentChat) return;
-    // persist to backend
-    await axios.post(sendMessageRoute, {
-      from: data._id,
-      to: currentChat._id,
-      message: msg,
-    });
 
-    // emit via websocket for real-time delivery
-    socket.emit("send-message", {
-      from: data._id,
-      to: currentChat._id,
-      message: msg,
-    });
+    try {
+      await apiClient.post(sendMessageRoute, {
+        from: data._id,
+        to: currentChat._id,
+        message: msg,
+      });
 
-    setMessages((prev) => [...prev, { fromSelf: true, message: msg }]);
+      const s = getSocket();
+      s.emit("send-message", {
+        from: data._id,
+        to: currentChat._id,
+        message: msg,
+      });
+
+      setMessages((prev) => [...prev, { fromSelf: true, message: msg }]);
+    } catch (error) {
+      const msgText =
+        error?.response?.data?.msg ||
+        error?.message ||
+        "Failed to send message";
+      console.error(msgText);
+    }
   };
 
-  // Auto-scroll only when appropriate: when a new message arrives and
-  // the user is at (or near) the bottom, or when the last message is from self.
   useEffect(() => {
-    const prevLen = prevMessagesLengthRef.current || 0;
     const newLen = messages.length;
     const lastMessage = messages[newLen - 1];
-
-    const newMessageArrived = newLen > prevLen;
-
     const shouldScroll =
-      newMessageArrived &&
-      (isAtBottomRef.current || (lastMessage && lastMessage.fromSelf));
-
+      isAtBottomRef.current || (lastMessage && lastMessage.fromSelf);
     if (shouldScroll) {
-      scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+      const el = messagesContainerRef.current;
+      if (el) el.scrollTop = el.scrollHeight;
     }
-
-    prevMessagesLengthRef.current = newLen;
   }, [messages]);
 
-  // Track whether the user has scrolled away from the bottom of the messages list.
   useEffect(() => {
     const el = messagesContainerRef.current;
     if (!el) return undefined;
 
     const onScroll = () => {
       const { scrollTop, clientHeight, scrollHeight } = el;
-      // within 48px of the bottom -> considered at bottom
       isAtBottomRef.current = scrollTop + clientHeight >= scrollHeight - 48;
     };
 
     el.addEventListener("scroll", onScroll, { passive: true });
-    // initialize
     onScroll();
 
     return () => el.removeEventListener("scroll", onScroll);
   }, [messagesContainerRef, currentChat]);
+
+  useEffect(() => {
+    const sentinel = topSentinelRef.current;
+    if (!sentinel) return undefined;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(async (entry) => {
+          if (!entry.isIntersecting) return;
+          if (loadingMore || !hasMore) return;
+          setLoadingMore(true);
+          const nextPage = page + 1;
+          await fetchMessages(nextPage);
+          setPage(nextPage);
+          setLoadingMore(false);
+        });
+      },
+      { root: messagesContainerRef.current, threshold: 0.1 },
+    );
+
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [topSentinelRef, fetchMessages, page, loadingMore, hasMore]);
 
   return (
     <div className="chat-container-inner">
@@ -146,9 +195,10 @@ export default function ChatContainer({ currentChat, onToggleContacts }) {
         <Logout />
       </div>
       <div className="chat-messages" ref={messagesContainerRef}>
+        <div ref={topSentinelRef} style={{ height: 1 }} />
         {messages.map((message) => {
           return (
-            <div ref={scrollRef} key={uuidv4()}>
+            <div key={uuidv4()}>
               <div
                 className={`message ${
                   message.fromSelf ? "sended" : "recieved"

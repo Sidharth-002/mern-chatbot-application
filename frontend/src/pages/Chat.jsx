@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import { toastOptions } from "../utils/toast";
 import "react-toastify/dist/ReactToastify.css";
 import { allUsersRoute } from "../utils/APIRoutes";
+import apiClient from "../utils/apiClient";
+import { AuthContext } from "../context/AuthContext";
 import ChatContainer from "../components/ChatContainer";
 import Contacts from "../components/Contacts";
 import Welcome from "../components/Welcome";
@@ -17,37 +18,29 @@ export default function Chat() {
   const [currentChat, setCurrentChat] = useState(undefined);
   const [currentUser, setCurrentUser] = useState(undefined);
   const [contactsOpen, setContactsOpen] = useState(false);
+  const { state } = useContext(AuthContext);
+
   useEffect(() => {
-    const storedUser = localStorage.getItem(
-      process.env.REACT_APP_LOCALHOST_KEY,
-    );
-
-    if (!storedUser) {
-      navigate("/login");
-      return;
+    if (state?.user) {
+      setCurrentUser(state.user);
     }
-
-    try {
-      setCurrentUser(JSON.parse(storedUser));
-    } catch (error) {
-      console.error("Failed to parse stored user", error);
-      toast.error("Something went wrong. Redirected to login", toastOptions);
-      localStorage.removeItem(process.env.REACT_APP_LOCALHOST_KEY);
-      navigate("/login");
-    }
-  }, [navigate]);
+  }, [state?.user]);
   useEffect(() => {
     const fetchContacts = async () => {
       if (!currentUser) return;
 
       if (currentUser.isAvatarImageSet) {
         try {
-          const { data } = await axios.get(
+          const { data } = await apiClient.get(
             `${allUsersRoute}/${currentUser._id}`,
           );
           setContacts(data);
         } catch (error) {
-          console.error("Failed to fetch contacts", error);
+          const msg =
+            error?.response?.data?.msg ||
+            error?.message ||
+            "Failed to fetch contacts";
+          toast.error(msg, toastOptions);
         }
       } else {
         navigate("/setAvatar");
